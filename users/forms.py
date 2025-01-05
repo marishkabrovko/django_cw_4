@@ -16,7 +16,9 @@ class PasswordResetRequestForm(forms.Form):
 
 class PasswordResetConfirmForm(forms.Form):
     new_password = forms.CharField(widget=forms.PasswordInput, label="Новый пароль")
-    confirm_password = forms.CharField(widget=forms.PasswordInput, label="Повторите пароль")
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput, label="Повторите пароль"
+    )
 
     def clean(self):
         cleaned_data = super().clean()
@@ -32,10 +34,10 @@ class PasswordResetConfirmForm(forms.Form):
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ('avatar', 'phone_number', 'country')
+        fields = ("avatar", "phone_number", "country")
 
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
-        self.fields['avatar'].widget.attrs.update({'class': 'form-control'})
-        self.fields['phone_number'].widget.attrs.update({'class': 'form-control'})
-        self.fields['country'].widget.attrs.update({'class': 'form-control'})
+        self.fields["avatar"].widget.attrs.update({"class": "form-control"})
+        self.fields["phone_number"].widget.attrs.update({"class": "form-control"})
+        self.fields["country"].widget.attrs.update({"class": "form-control"})

@@ -30,15 +30,22 @@ class MainPageView(LoginRequiredMixin, TemplateView):
         if user.has_perm("user.can_block_users"):
 
             context["total_mailing"] = Mailing.objects.count()
-            context["active_mailing"] = Mailing.objects.filter(status__in=["created", "launched"]).count()
+            context["active_mailing"] = Mailing.objects.filter(
+                status__in=["created", "launched"]
+            ).count()
             context["unique_recipients"] = Recipient.objects.distinct().count()
             return context
 
         else:
             context["total_mailing"] = Mailing.objects.filter(owner=user).count()
-            context["active_mailing"] = Mailing.objects.filter(owner=user).filter(
-                status__in=["created", "launched"]).count()
-            context["unique_recipients"] = Recipient.objects.filter(owner=user).distinct().count()
+            context["active_mailing"] = (
+                Mailing.objects.filter(owner=user)
+                .filter(status__in=["created", "launched"])
+                .count()
+            )
+            context["unique_recipients"] = (
+                Recipient.objects.filter(owner=user).distinct().count()
+            )
 
         return context
 
@@ -177,7 +184,7 @@ class MailingSendView(LoginRequiredMixin, View):
     def get(self, request, pk, *args, **kwargs):
         mailing = get_object_or_404(Mailing, pk=pk)
 
-        return render(request, 'mailing/mailing_send.html', {'mailing': mailing})
+        return render(request, "mailing/mailing_send.html", {"mailing": mailing})
 
     def post(self, request, pk, *args, **kwargs):
         mailing = get_object_or_404(Mailing, pk=pk)
@@ -187,13 +194,23 @@ class MailingSendView(LoginRequiredMixin, View):
 
             for recipient in recipients:
                 try:
-                    send_mail(mailing.message.topic, mailing.message.text, EMAIL_HOST_USER, [recipient.email])
+                    send_mail(
+                        mailing.message.topic,
+                        mailing.message.text,
+                        EMAIL_HOST_USER,
+                        [recipient.email],
+                    )
 
-                    AttemptSending.objects.create(mailing=mailing, status="success",
-                                                  response="Сообщение отправлено успешно")
+                    AttemptSending.objects.create(
+                        mailing=mailing,
+                        status="success",
+                        response="Сообщение отправлено успешно",
+                    )
 
                 except Exception as e:
-                    AttemptSending.objects.create(mailing=mailing, status="not_success", response=str(e))
+                    AttemptSending.objects.create(
+                        mailing=mailing, status="not_success", response=str(e)
+                    )
 
         mailing.status = "launched"
         mailing.save()
@@ -207,8 +224,12 @@ class MailingReportView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["successful_attempts"] = self.object.attempts.filter(status="success").count()
-        context["failed_attempts"] = self.object.attempts.filter(status="not_success").count()
+        context["successful_attempts"] = self.object.attempts.filter(
+            status="success"
+        ).count()
+        context["failed_attempts"] = self.object.attempts.filter(
+            status="not_success"
+        ).count()
         context["total_attempts"] = self.object.attempts.count()
 
         return context
@@ -224,10 +245,12 @@ class DisabledMailingView(LoginRequiredMixin, View):
     def post(self, request, pk):
         mailing = get_object_or_404(Mailing, id=pk)
 
-        if not request.user.has_perm('mailing.can_disabling_mailing'):
-            return HttpResponseForbidden("У вас недостаточно прав для отключения рассылки")
+        if not request.user.has_perm("mailing.can_disabling_mailing"):
+            return HttpResponseForbidden(
+                "У вас недостаточно прав для отключения рассылки"
+            )
 
         mailing.status = "completed"
         mailing.save()
 
-        return redirect('mailing:mailing', pk=mailing.id)
+        return redirect("mailing:mailing", pk=mailing.id)
