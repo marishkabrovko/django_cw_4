@@ -16,6 +16,8 @@ black = "^24.10.0"
 ipython = "^8.31.0"
 pillow = "^11.1.0"
 redis = "^5.2.1"
+django-phonenumber-field = "^8.0.0"
+django-phonenumbers = "^1.0.1"
 
 
 [build-system]
