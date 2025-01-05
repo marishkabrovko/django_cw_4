@@ -11,12 +11,7 @@ from django.views import View
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from config.settings import EMAIL_HOST_USER
-from users.forms import (
-    PasswordResetConfirmForm,
-    PasswordResetRequestForm,
-    UserForm,
-    UserRegisterForm,
-)
+from users.forms import PasswordResetConfirmForm, PasswordResetRequestForm, UserForm, UserRegisterForm
 from users.models import User
 
 
@@ -67,10 +62,7 @@ def password_reset_request(request):
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(str(user.pk).encode())
             reset_url = request.build_absolute_uri(
-                reverse(
-                    "users:password_reset_confirm",
-                    kwargs={"uid64": uid, "token": token},
-                )
+                reverse("users:password_reset_confirm", kwargs={"uid64": uid, "token": token})
             )
 
             send_mail(
@@ -140,9 +132,7 @@ class BlockUserView(LoginRequiredMixin, View):
         user = get_object_or_404(User, id=pk)
 
         if not request.user.has_perm("user.can_block_users"):
-            return HttpResponseForbidden(
-                "У вас недостаточно прав для блокировки пользователя"
-            )
+            return HttpResponseForbidden("У вас недостаточно прав для блокировки пользователя")
 
         user.is_active = False
         user.save()

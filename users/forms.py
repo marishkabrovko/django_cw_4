@@ -16,9 +16,7 @@ class PasswordResetRequestForm(forms.Form):
 
 class PasswordResetConfirmForm(forms.Form):
     new_password = forms.CharField(widget=forms.PasswordInput, label="Новый пароль")
-    confirm_password = forms.CharField(
-        widget=forms.PasswordInput, label="Повторите пароль"
-    )
+    confirm_password = forms.CharField(widget=forms.PasswordInput, label="Повторите пароль")
 
     def clean(self):
         cleaned_data = super().clean()
