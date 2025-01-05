@@ -89,6 +89,7 @@ celerybeat-schedule
 
 # Editor directories and files
 .idea/
+.iml
 .vscode
 *.swp
 *~
